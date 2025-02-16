@@ -1,15 +1,14 @@
 import re
 import json
-import os
 import requests
 
 class TranslationAnalyzer:
     def __init__(self):
-        self.url = ""
-        self.user_agent = ""
-        self.org_id = ""
-        self.api_key = ""
-        self.auth_token = ""
+        self.url = "https://firefall-stage.adobe.io/v1/chat/completions"
+        self.user_agent = "Insomnia/2023.5.7-adobe"
+        self.org_id = "154340995B76EEF60A494007@AdobeOrg"
+        self.api_key = "scoe-hackathon-app"
+        self.auth_token = "eyJhbGciOiJSUzI1NiIsIng1dSI6Imltc19uYTEtc3RnMS1rZXktYXQtMS5jZXIiLCJraWQiOiJpbXNfbmExLXN0ZzEta2V5LWF0LTEiLCJpdHQiOiJhdCJ9.eyJpZCI6IjE3Mzk2MDg5Mjc4NTVfYWJlNTAwN2MtZDQyYi00YTNhLTlkNmMtM2FlYzM1MWUyOTlhX3V3MiIsInR5cGUiOiJhY2Nlc3NfdG9rZW4iLCJjbGllbnRfaWQiOiJzY29lLWhhY2thdGhvbi1hcHAiLCJ1c2VyX2lkIjoic2NvZS1oYWNrYXRob24tYXBwQEFkb2JlSUQiLCJhcyI6Imltcy1uYTEtc3RnMSIsImFhX2lkIjoic2NvZS1oYWNrYXRob24tYXBwQEFkb2JlSUQiLCJjdHAiOjAsInBhYyI6InNjb2UtaGFja2F0aG9uLWFwcF9zdGciLCJydGlkIjoiMTczOTYwODkyNzg1Nl82NzBjNjdhYi01MDVkLTRkMDUtOWJjNC03NDgwOGM2M2VhNjBfdXcyIiwibW9pIjoiZWI5MWQ5YTUiLCJydGVhIjoiMTc0MDgxODUyNzg1NiIsImV4cGlyZXNfaW4iOiI4NjQwMDAwMCIsImNyZWF0ZWRfYXQiOiIxNzM5NjA4OTI3ODU1Iiwic2NvcGUiOiJzeXN0ZW0ifQ.grvKTQk59NmOGHSAX8OpBwrBaZbGT93Xpg0DGQi0ctkL3nADzHQ88yX_yk12kQMdlIKO6DTo62mIfBeiYrQeBRJe2j1q2DTROeLvY6foDjayYZQPEaX4KiTqJX9f43oDpoJBlnBcpV6CRfy29UEGNiKtNpOOS3z35Us44WiuxzOOIsK6YRBfwvhm4seinMv59EiK5WOSm5BJe8-zqE4B7AtYC2fqAhRuaxFmwJxhY_tkxACRL55x3xFOOnfu35_xCgoipBsJhwQCC4E8KMiGpyk4uqt_Grg5Y9RpNPdmJduyMDEHgUbUsQ9w5aJyK8dsEqp1e12CqjIVmrK_X8DQpw"
 
     def print_json_data(self, raw_data):
 
@@ -139,6 +138,7 @@ class TranslationAnalyzer:
         )
 
         data = self.call_api(payload)
+        print(data)
         return self.print_json_data(data)
 
 
@@ -181,6 +181,9 @@ class TranslationAnalyzer:
             print(f"Error: {raw_data['error_code']} - {raw_data['message']}")
             return None  # Indicating an error occurred
         analysis_json_text = raw_data["generations"][0][0]["text"]
+        print(analysis_json_text)
+        for char in analysis_json_text:
+            print(f"Character: {char} | Unicode: {ord(char)}")
         analysis_json = json.loads(analysis_json_text)
         better_translation = analysis_json["better_translation"]
         reason=analysis_json["reason"]
@@ -197,5 +200,6 @@ class TranslationAnalyzer:
             "Authorization": self.auth_token,
         }
         response = requests.request("POST", self.url, headers=headers, data=payload, timeout=100)
+        print(response)
         data = json.loads(response.text)
         return data
