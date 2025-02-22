@@ -1,7 +1,8 @@
 #from .marian import MarianTranslator
+from .helper import EvaluationHelper
 from .mariantranslator import MarianTranslator
 from .finetuned import MarianFineTunedTranslator
 from .analyzer import TranslationAnalyzer
-from .helper import EvaluationHelper
 
-__all__ = ["MarianTranslator", "MarianFineTunedTranslator", "TranslationAnalyzer", "EvaluationHelper"]
+
+__all__ = ["EvaluationHelper", "MarianTranslator", "MarianFineTunedTranslator", "TranslationAnalyzer"]
