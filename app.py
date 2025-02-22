@@ -2,12 +2,14 @@ import gradio as gr
 import nltk
 import pandas as pd
 import os
+from dotenv import load_dotenv
 
 from translator import MarianTranslator, MarianFineTunedTranslator, TranslationAnalyzer
 
+load_dotenv()
 # Instantiate classes
-pretrained_translator = MarianTranslator("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")
-finetuned_translator = MarianFineTunedTranslator("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")
+pretrained_translator = MarianTranslator(os.getenv("HUGGINGFACE_TOKEN"))
+finetuned_translator = MarianFineTunedTranslator(os.getenv("HUGGINGFACE_TOKEN"))
 analyzer = TranslationAnalyzer()
 print(f"NLTK Version {nltk.__version__}")
 # Function to handle translation and analysis
