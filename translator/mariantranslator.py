@@ -11,7 +11,7 @@ from datasets import Dataset
 from sklearn.metrics import confusion_matrix
 import itertools
 import math
-from helper import EvaluationHelper
+from translator import EvaluationHelper
 
 class MarianTranslator:
 
