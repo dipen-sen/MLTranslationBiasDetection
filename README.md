@@ -1,3 +1,14 @@
+---
+title: AI-Powered Translation App
+emoji: 🚀
+colorFrom: blue
+colorTo: purple
+sdk: gradio
+sdk_version: 5.17.1
+app_file: app.py
+pinned: false
+---
+
 # 🌍 AI-Powered Translation App
 
 ## 📌 Project Overview
