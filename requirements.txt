@@ -14,3 +14,4 @@ sacremoses
 accelerate
 nltk
 bert-score
+dotenv

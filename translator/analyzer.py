@@ -1,14 +1,25 @@
 import re
 import json
 import requests
+import os
+from dotenv import load_dotenv
 
 class TranslationAnalyzer:
     def __init__(self):
-        self.url = "https://firefall-stage.adobe.io/v1/chat/completions"
-        self.user_agent = "Insomnia/2023.5.7-adobe"
-        self.org_id = "154340995B76EEF60A494007@AdobeOrg"
-        self.api_key = "scoe-hackathon-app"
-        self.auth_token = "eyJhbGciOiJSUzI1NiIsIng1dSI6Imltc19uYTEtc3RnMS1rZXktYXQtMS5jZXIiLCJraWQiOiJpbXNfbmExLXN0ZzEta2V5LWF0LTEiLCJpdHQiOiJhdCJ9.eyJpZCI6IjE3Mzk2MDg5Mjc4NTVfYWJlNTAwN2MtZDQyYi00YTNhLTlkNmMtM2FlYzM1MWUyOTlhX3V3MiIsInR5cGUiOiJhY2Nlc3NfdG9rZW4iLCJjbGllbnRfaWQiOiJzY29lLWhhY2thdGhvbi1hcHAiLCJ1c2VyX2lkIjoic2NvZS1oYWNrYXRob24tYXBwQEFkb2JlSUQiLCJhcyI6Imltcy1uYTEtc3RnMSIsImFhX2lkIjoic2NvZS1oYWNrYXRob24tYXBwQEFkb2JlSUQiLCJjdHAiOjAsInBhYyI6InNjb2UtaGFja2F0aG9uLWFwcF9zdGciLCJydGlkIjoiMTczOTYwODkyNzg1Nl82NzBjNjdhYi01MDVkLTRkMDUtOWJjNC03NDgwOGM2M2VhNjBfdXcyIiwibW9pIjoiZWI5MWQ5YTUiLCJydGVhIjoiMTc0MDgxODUyNzg1NiIsImV4cGlyZXNfaW4iOiI4NjQwMDAwMCIsImNyZWF0ZWRfYXQiOiIxNzM5NjA4OTI3ODU1Iiwic2NvcGUiOiJzeXN0ZW0ifQ.grvKTQk59NmOGHSAX8OpBwrBaZbGT93Xpg0DGQi0ctkL3nADzHQ88yX_yk12kQMdlIKO6DTo62mIfBeiYrQeBRJe2j1q2DTROeLvY6foDjayYZQPEaX4KiTqJX9f43oDpoJBlnBcpV6CRfy29UEGNiKtNpOOS3z35Us44WiuxzOOIsK6YRBfwvhm4seinMv59EiK5WOSm5BJe8-zqE4B7AtYC2fqAhRuaxFmwJxhY_tkxACRL55x3xFOOnfu35_xCgoipBsJhwQCC4E8KMiGpyk4uqt_Grg5Y9RpNPdmJduyMDEHgUbUsQ9w5aJyK8dsEqp1e12CqjIVmrK_X8DQpw"
+
+        load_dotenv()
+        self.url = os.getenv("FIREFALL_URL")
+        self.user_agent = os.getenv("USER_AGENT")
+        self.org_id = os.getenv("ORG_ID")
+        self.api_key = os.getenv("API_KEY")
+        self.auth_token = os.getenv("AUTH_TOKEN")
+
+        print(self.url )
+        print(self.user_agent)
+        print(self.org_id)
+        print(self.api_key)
+        print(self.auth_token)
+
 
     def print_json_data(self, raw_data):
 
@@ -27,6 +38,18 @@ class TranslationAnalyzer:
             return formatted_json
         else:
             print("No JSON content found.")
+            return None
+
+    def extract_json(self, raw_data):
+        """Extract and parse JSON content from a text block, handling cases where it's enclosed in ```json ... ```."""
+        parsed_json = raw_data["generations"][0][0]["text"]
+        # Remove ```json ... ``` if present
+        parsed_json = re.sub(r"```json\n|\n```", "", parsed_json).strip()
+
+        try:
+            return   json.dumps(json.loads(parsed_json), indent=4, ensure_ascii=False)# Parse JSON safely
+        except json.JSONDecodeError as e:
+            print(f"Error decoding JSON: {e}")
             return None
 
     def evaluate_translation(self, source_text, translated_text):
@@ -139,7 +162,7 @@ class TranslationAnalyzer:
 
         data = self.call_api(payload)
         print(data)
-        return self.print_json_data(data)
+        return self.extract_json(data)
 
 
     def compare_translation(self, source_text, pretuned_translated_text, finetuned_translated_text):
