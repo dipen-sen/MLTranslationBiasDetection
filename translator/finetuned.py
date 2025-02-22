@@ -5,7 +5,7 @@ import nltk
 from nltk.translate.bleu_score import sentence_bleu, SmoothingFunction
 from transformers import MarianMTModel, MarianTokenizer, GenerationConfig
 from huggingface_hub import login
-from helper import EvaluationHelper
+from translator import EvaluationHelper
 
 class MarianFineTunedTranslator:
 
