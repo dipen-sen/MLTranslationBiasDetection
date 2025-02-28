@@ -149,49 +149,12 @@ with gr.Blocks(theme=gr.themes.Soft()) as demo:
         outputs=[notification]
     )
 
-    # Connect flagging function
-    #flag_button.click(
-    #    flag_translation,
-    #    inputs=[input_text, reference_text, pretrained_translation, pretrained_evaluation_table, pretrained_bias,
-    #            finetuned_translation, finetuned_evaluation_table, finetuned_bias, final_verdict],
-    #    outputs=[]
-    #)
-
     # Connect flagging function (shows pop-up notification)
     flag_button.click(
         flag_translation,
         inputs=[input_text, reference_text, pretrained_translation, pretrained_evaluation_table, pretrained_bias,
                 finetuned_translation, finetuned_evaluation_table, finetuned_bias, final_verdict],
         outputs=[notification]
-    )
-
-
-
-
-    gr.HTML("<hr style='border:1px solid #ddd; margin:20px 0;'>")
-
-    # New Section for training model
-    with gr.Row():  # Grouping CSV upload and train button in the same row
-        gr.Markdown("### 📝 Upload CSV for Fine-Tuning")
-        with gr.Column(scale=2):  # CSV upload and button on the left
-            csv_upload = gr.File(label="Upload CSV", type="filepath")
-        with gr.Column(scale=1):  # Train button on the right
-            train_button = gr.Button("🚀 Train", scale=1)
-
-    # Modify UI to include Progress Bar & Status
-    progress_slider = gr.Slider(0, 100, value=0, label="Training Progress", interactive=False)
-    status_text = gr.Textbox(label="Status", interactive=False)
-    # Console logs (wide text box)
-    training_logs = gr.Textbox(label="Training Console Logs", interactive=False, lines=10, elem_id="console-output")
-    # **NEW**: Add Image components to display plots
-    training_loss_img = gr.Image(label="Training Loss", interactive=False)
-    bleu_score_img = gr.Image(label="BLEU Score", interactive=False)
-    perplexity_img = gr.Image(label="Perplexity", interactive=False)
-
-    train_button.click(
-        fn=train_model,
-        inputs=[csv_upload],
-        outputs=[training_logs, progress_slider, training_loss_img, bleu_score_img, perplexity_img]  # Now updating logs + progress bar
     )
 
 # Launch the app
