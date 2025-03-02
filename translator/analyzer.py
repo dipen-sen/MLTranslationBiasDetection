@@ -43,14 +43,35 @@ class TranslationAnalyzer:
     def extract_json(self, raw_data):
         """Extract and parse JSON content from a text block, handling cases where it's enclosed in ```json ... ```."""
         parsed_json = raw_data["generations"][0][0]["text"]
-        # Remove ```json ... ``` if present
-        parsed_json = re.sub(r"```json\n|\n```", "", parsed_json).strip()
 
-        try:
-            return   json.dumps(json.loads(parsed_json), indent=4, ensure_ascii=False)# Parse JSON safely
-        except json.JSONDecodeError as e:
-            print(f"Error decoding JSON: {e}")
+        # Extract JSON content using regex
+        match = re.search(r"```json\n(.*?)\n```", parsed_json, re.DOTALL)
+
+        if match:
+            extracted_json = match.group(1)  # Extract the JSON string
+            try:
+                json_obj = json.loads(extracted_json)  # Convert to Python JSON object
+                json_string = json.dumps(json_obj, indent=2, ensure_ascii=False)
+                print(json_string)
+                return  json_string  # Pretty print JSON
+            except json.JSONDecodeError:
+                print("Error: Extracted data is not valid JSON.")
+                return None
+        else:
+            print("Error: No JSON data found in the input.")
             return None
+
+
+
+
+        # Remove ```json ... ``` if present
+        #parsed_json = re.sub(r"```json\n|\n```", "", parsed_json).strip()
+
+        #try:
+        #    return   json.dumps(json.loads(parsed_json), indent=4, ensure_ascii=False)# Parse JSON safely
+        #except json.JSONDecodeError as e:
+        #    print(f"Error decoding JSON: {e}")
+        #    return None
 
     def evaluate_translation(self, source_text, translated_text):
 
@@ -156,7 +177,10 @@ class TranslationAnalyzer:
                     },
                     {"role": "user", "content": prompt},
                 ],
-                "llm_metadata": {"model_name": "gpt-4o", "llm_type": "azure_chat_openai"},
+                "llm_metadata": {"model_name": "gpt-4o", "llm_type": "azure_chat_openai", "temprature": 0},
+                "response_format": {
+                    "type": "json_object"
+                }
             }
         )
 
@@ -191,7 +215,10 @@ class TranslationAnalyzer:
                     },
                     {"role": "user", "content": prompt},
                 ],
-                "llm_metadata": {"model_name": "gpt-4o", "llm_type": "azure_chat_openai"},
+                "llm_metadata": {"model_name": "gpt-4o", "llm_type": "azure_chat_openai", "temprature": 0},
+                "response_format": {
+                    "type": "json_object"
+                }
             }
         )
 
@@ -205,9 +232,8 @@ class TranslationAnalyzer:
             return None  # Indicating an error occurred
         analysis_json_text = raw_data["generations"][0][0]["text"]
         print(analysis_json_text)
-        for char in analysis_json_text:
-            print(f"Character: {char} | Unicode: {ord(char)}")
-        analysis_json = json.loads(analysis_json_text)
+        parsed_analysis_json = re.sub(r"```json\n|\n```", "", analysis_json_text).strip()
+        analysis_json = json.loads(parsed_analysis_json)
         better_translation = analysis_json["better_translation"]
         reason=analysis_json["reason"]
         analysis_text = "The better translation is " + better_translation + "." + reason

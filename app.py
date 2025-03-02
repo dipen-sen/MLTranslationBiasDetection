@@ -71,7 +71,8 @@ finetuned_empty_df = pd.DataFrame(columns=["Score", "Value"])
 
 # Build the Gradio Interface
 # Ensure flagged data directory exists
-flagged_data_path = "flagged_logs.csv"
+#flagged_data_path = "flagged_logs.csv"
+flagged_data_path = "flagged_logs.xlsx"
 
 
 # Function to handle flagging
@@ -85,9 +86,11 @@ def flag_translation(input_text, reference_text, pretrained_translation, pretrai
     )
 
     if not os.path.exists(flagged_data_path):
-        flagged_entry.to_csv(flagged_data_path, index=False)
+        #flagged_entry.to_csv(flagged_data_path, index=False, encoding="utf-8-sig")
+        flagged_entry.to_excel(flagged_data_path, index=False, engine="openpyxl")
     else:
-        flagged_entry.to_csv(flagged_data_path, mode="a", header=False, index=False)
+        #flagged_entry.to_csv(flagged_data_path, mode="a", header=False, index=False, encoding="utf-8-sig")
+        flagged_entry.to_excel(flagged_data_path, mode="a", header=False, index=False, engine="openpyxl")
 
     #return "✅ Flagged successfully!"
     return gr.update(visible=True)
@@ -107,7 +110,7 @@ with gr.Blocks(theme=gr.themes.Soft()) as demo:
             translate_button = gr.Button("🚀 Translate", scale=1)
         gr.Markdown("### 📝 Enter Reference Text to calculate Bleu score")
         with gr.Row():
-            reference_text = gr.Textbox(label="English", placeholder="Type here...", lines=2, scale=5)
+            reference_text = gr.Textbox(label="French", placeholder="Type here...", lines=2, scale=5)
             # Added for flagging
             #flag_button = gr.Button("🚩 Flag Translation")
             with gr.Group():
